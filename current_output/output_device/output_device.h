@@ -7,6 +7,7 @@
 
 class OutputDevice {
 public:
+    typedef bool (*OutputControlCallback)(const OutputDevice* output);
 
     struct OutputDevicePwmConfig_st
     {
@@ -26,6 +27,7 @@ public:
 
         uint8_t pwmEnable;
         OutputDevicePwmConfig_st pwmConfig;
+        OutputControlCallback userControlCallback;
     };
 
     struct OutputHardwareCapabilities_st {
@@ -67,9 +69,17 @@ public:
     virtual void disablePWM() = 0;
     virtual void setPWMConfig(const OutputDevicePwmConfig_st& config) = 0;
 
+    virtual void Process() = 0;
 
-
-    protected:
+protected:
+    struct OutputDynamic_st {
+        uint16_t current;  
+        uint16_t voltage;
+        int16_t temperature;
+        uint8_t fuseTripCount;
+        uint8_t isFuseTripped;
+    };
+        OutputDynamic_st dynamic;
         OutputDevicePwmConfig_st pwmConfig;
 
 }; 
